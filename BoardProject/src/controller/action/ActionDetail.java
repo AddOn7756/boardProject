@@ -37,6 +37,12 @@ public class ActionDetail implements Action {
 		if( request.getParameter("pageNum")!=null) {
 			pageNum = Integer.parseInt(request.getParameter("pageNum"));
 		}
+		 // 댓글 찾기 추가된 부분 ------------------------------------------------------------
+			if(request.getAttribute("pageNum")!=null) { 
+				
+				pageNum = (Integer) request.getAttribute("pageNum");
+			}
+			 // 댓글 찾기 추가된 부분 ------------------------------------------------------------		
 		
 		BoardVO board = new BoardVO();
 		board.setbId(bId);
@@ -46,11 +52,11 @@ public class ActionDetail implements Action {
 		if (session.getAttribute("user") !=null) {
 			UsersVO user = (UsersVO) session.getAttribute("user");
 			userVO.setUserNum(user.getUserNum());
-		}
+		} 
 		
 		board = boardDAO.getDBData(userVO,board); 
 		
-		userVO.setUserNum(0);
+	//	userVO.setUserNum(0);
 		replyVO.setbId(bId);
 		
 		ArrayList<ReplySet> datas = replyDAO.getDBList(replyVO, pageNum);
@@ -75,6 +81,13 @@ public class ActionDetail implements Action {
 //			}
 //			
 //		}
+		// 조회수 증가 !!
+		if((userVO.getUserNum() != board.getUserNum()) && (request.getParameter("addHit") != null)){
+		int hit = board.getbHit();  
+		board.setbHit(++hit);
+		boardDAO.addHit(board);
+		}
+		///////////////////////////////
 		
 		request.setAttribute("pageNum", pageNum);
 		request.setAttribute("pageLen", pageLen);

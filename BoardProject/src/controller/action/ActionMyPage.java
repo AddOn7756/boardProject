@@ -60,7 +60,7 @@ public class ActionMyPage implements Action {
 			request.setAttribute("selUser", selUser);
 			return forward ;
 		}
-		if (user.getUserNum() != userNum) { // 로그인한 유저가 본인이 아닌 다른 사람의 마이페이지에 접근했을 때
+		else if (user.getUserNum() != userNum) { // 로그인한 유저가 본인이 아닌 다른 사람의 마이페이지에 접근했을 때
 			UsersVO selUser = new UsersVO();
 			selUser.setUserNum(userNum);
 			selUser = userDAO.getDBData(selUser);
@@ -70,14 +70,14 @@ public class ActionMyPage implements Action {
 		}
 		// 본인의 페이지 접근 했을 때  댓글 리스트를 전달! ------------------------------------------------
 		
-		if (request.getParameter("replyPageNum") !=null) {
+		if (request.getParameter("replyPageNum") !=null && request.getParameter("replyPageNum") !="") {
 			replyPageNum = Integer.parseInt(request.getParameter("replyPageNum"));
 		}
 
 		String replyCtgr ="reply";
 		int replyLen=0;
 		
-		if (request.getParameter("replyCtgr") !=null) {
+		if (request.getParameter("replyCtgr") !=null && request.getParameter("replyCtgr") != "") {
 			replyCtgr = request.getParameter("replyCtgr");
 		}
 		

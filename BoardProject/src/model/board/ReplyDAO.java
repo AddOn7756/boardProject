@@ -301,16 +301,23 @@ public class ReplyDAO {
 	}
 	//========================================================================================	
 	@SuppressWarnings("resource")
-	public boolean insert(ReplyVO vo) {
+	public int insert(ReplyVO vo) {
 		Connection conn = JNDI.getConnection();
 		PreparedStatement pstmt = null;
-		boolean res = false;
+		int res = 0;
 		// 트렌젝션 확인
 		boolean check = false;
 		try {
 			// (SELECT NVL(MAX(R_ID), 0)+1 FROM BOARD_REPLY),?,?,?,?,?)
 			// ? 입력값 : (B_ID, USER_NUM, R_CONTENT, R_WRITER, PARENT_ID)
 			conn.setAutoCommit(false);
+			String getRidSql = "SELECT NVL(MAX(rid), 0)+1 FROM boardreply";
+			pstmt = conn.prepareStatement(getRidSql);
+			ResultSet rs = pstmt.executeQuery();
+			if(rs.next()) {
+				res = rs.getInt(1);
+			}
+					
 
 			pstmt = conn.prepareStatement(sql_INSERT);
 			pstmt.setInt(1, vo.getbId());			// 보드 ID
@@ -329,7 +336,7 @@ public class ReplyDAO {
 
 			if (check) {
 				conn.commit();
-				res= true;
+				
 			}
 			else {
 				conn.rollback();
@@ -351,7 +358,7 @@ public class ReplyDAO {
 		boolean res = false;
 		String sql;
 		int cnt=0; // 대댓글 개수 확인
-
+		
 		// 커밋확인용
 		boolean check = false;
 
@@ -394,6 +401,23 @@ public class ReplyDAO {
 				pstmt.setInt(1, vo.getrId());
 				pstmt.executeUpdate();
 				System.out.println("대댓글 일때 삭제 통과");
+				
+				if(vo.getDeleteAt().equals("Y")) {
+					sql ="SELECT COUNT(*) FROM boardreply WHERE parentid=?";
+					pstmt = conn.prepareStatement(sql);
+					pstmt.setInt(1, vo.getParentId());
+					ResultSet rs = pstmt.executeQuery();
+					if(rs.next()) {
+						cnt=rs.getInt(1);
+					}
+					if (cnt == 0) {
+						sql = "DELETE FROM boardreply WHERE rid=?";
+						pstmt = conn.prepareStatement(sql);
+						pstmt.setInt(1, vo.getParentId());
+						pstmt.executeUpdate();
+						System.out.println("대댓글 없을때 댓글삭제 통과");
+					}
+				}
 			}
 
 			// 댓글 수 1 제거
@@ -444,5 +468,42 @@ public class ReplyDAO {
 		return res;
 	}
 
+	/* 댓글 찾기 */
+	
+	
+	public int replyOrder(ReplyVO vo)  {
+		Connection conn = JNDI.getConnection();
+		PreparedStatement pstmt = null;
+		int order =0;
+		
+		String sql_order = "select rnum from (select rownum as rnum, rid from (select rid from BOARDREPLY where parentid=0 and bid=? order by rdate desc) ) where rid=? ";
+		
+		try {
+			pstmt = conn.prepareStatement(sql_order);
+			pstmt.setInt(1, vo.getbId());
+			pstmt.setInt(2, vo.getrId());
+			
+			ResultSet rs = pstmt.executeQuery();
+			
+			if(rs.next()) {
+				order = rs.getInt(1);
+			}
+			
+			
+			
+			
+		}catch(SQLException e) {
+			e.printStackTrace();
+			
+		}finally{
+			JNDI.disconnect(pstmt, conn);
+		}
+		
+		
+		return order;
+		
+	}
+	
+	
 
 }

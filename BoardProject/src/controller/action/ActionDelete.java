@@ -22,7 +22,7 @@ public class ActionDelete implements Action{
 		
 		
 		int bId = Integer.parseInt(request.getParameter("bId"));
-		
+		String bCtgr = request.getParameter("bCtgr");
 		board.setbId(bId);
 		
 		PrintWriter out = null;
@@ -33,13 +33,16 @@ public class ActionDelete implements Action{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		String path= "board.do";
+		if(bCtgr.equals("question")) {
+			path = "question.do";
+		}
 		
 		if(boardDAO.delete(board)) {
-			out.println("<script>alert('삭제가 완료되었습니다!');location.href='index.jsp'</script>"); // 어디로 갈지 정해야함!
+			out.println("<script>alert('삭제가 완료되었습니다!');location.href='"+path+"'</script>");
 			
 		}else {
-			out.println("<script>alert('삭제가 실패했습니다!');location.href='index.jsp'</script>"); // 어지로 갈지 정해야 함!
-
+			out.println("<script>alert('삭제가 실패했습니다!');location.href='"+path+"'</script>");
 		}
 		
 		

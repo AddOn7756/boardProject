@@ -35,6 +35,12 @@ public class ActionDetailTest implements Action{
 		if(request.getParameter("pageNum") !=null) {
 			pageNum = Integer.parseInt(request.getParameter("pageNum"));
 		}
+		 // 댓글 찾기 추가된 부분 ------------------------------------------------------------
+			if(request.getAttribute("pageNum")!=null) { 
+				
+				pageNum = (Integer) request.getAttribute("pageNum");
+			}
+			 // 댓글 찾기 추가된 부분 ------------------------------------------------------------		
 		
 		int tId = Integer.parseInt(request.getParameter("tId"));
 		test.settId(tId);
@@ -43,12 +49,13 @@ public class ActionDetailTest implements Action{
 		HttpSession session= request.getSession();
 		
 		user = (UsersVO) session.getAttribute("user");
-		if ( session.getAttribute("user")==null) {
+		if ( session.getAttribute("user")==null) { //비로그인 일때
 			user = new UsersVO();
 			user.setId("");
+			user.setUserNum(0);
 		}
 		
-		test = testDAO.getDBData(test,user); // 조회수 증가를 위한 user
+		test = testDAO.getDBData(test,user); 
 		
 		reply.settId(tId);
 		UsersVO Uvo = new UsersVO();
@@ -58,12 +65,15 @@ public class ActionDetailTest implements Action{
 		if (testReplySets.size() != 0) {
 		pageLen = testReplySets.get(0).getTestReCnt();
 		}
+		// 조회수 증가 !!
+		if( (user.getUserNum() != test.getUserNum() ) && (request.getParameter("addHit") != null)){
+		int hit = test.gettHit();  
+		test.settHit(++hit);
+		testDAO.addHit(test);
+		}
+		///////////////////////////////
 		
-//		int hit = test.gettHit();  비지니스 메서드로 대체 
-//		test.settHit(++hit);
-//		if(testDAO.update(test)) {
-//			System.out.println("조회수 증가!");
-//		}
+		
 		request.setAttribute("test", test);
 		request.setAttribute("testReplySets", testReplySets);
 		request.setAttribute("pageLen", pageLen);

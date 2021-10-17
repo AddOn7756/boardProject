@@ -15,7 +15,7 @@ public class JDBC {
 		String DName = "oracle.jdbc.driver.OracleDriver";
 
 		String url = "jdbc:oracle:thin:@localhost:1521:xe";
-		String user = "park";
+		String user = "you";
 		String password = "1234";
 
 		try {

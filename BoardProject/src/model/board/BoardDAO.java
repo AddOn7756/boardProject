@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 import model.common.JNDI;
+import model.test.TestVO;
 import model.users.UsersVO;
 
 public class BoardDAO {
@@ -221,10 +222,10 @@ public class BoardDAO {
 		Connection conn = JNDI.getConnection();
 		PreparedStatement pstmt = null;
 		BoardVO data = new BoardVO();
-		boolean check = false;
+
 		try {
 
-			conn.setAutoCommit(false);
+		
 
 			pstmt = conn.prepareStatement(sql_SELECT_ONE);
 			pstmt.setInt(1, bvo.getbId());
@@ -249,27 +250,7 @@ public class BoardDAO {
 			rs.close();
 
 			// 내가 쓴 글이면 조회수 증가 안함
-			if(uvo.getUserNum() == data.getUserNum()) {
-				System.out.println("uvo.getUserNum() : "+data.getUserNum() );
-				System.out.println("bvo.getUserNum() : "+data.getUserNum() );
-				System.out.println("BoardDAO.getdbDATe 조회수 증가 x");
-				check = true;
-			}
-			else {
-				System.out.println("BoardDAO.getdbDATe 조회수 증가 o");
-				String sql= "UPDATE board SET bhit=bhit+1 WHERE bid=?";
-				pstmt = conn.prepareStatement(sql);
-				pstmt.setInt(1, bvo.getbId());
-				pstmt.executeUpdate();
-				check = true;
-			}
-
-			if (check) {
-				conn.commit();
-			}
-			else {
-				conn.rollback();
-			}
+	
 
 		} catch (SQLException e) {
 			System.out.println("BoardDAO getDBData에서 발생");
@@ -370,5 +351,27 @@ public class BoardDAO {
 		}
 		return cnt;
 	}*/
+	
+	public void addHit(BoardVO vo) {
+		Connection conn = JNDI.getConnection();
+		
+		PreparedStatement pstmt = null;
+
+		try {
+			String sql = "update board set bhit = bhit+1 where bid=?";
+			pstmt = conn.prepareStatement(sql);
+			System.out.println("디비 조회수 증가 성공!!");
+			pstmt.setInt(1, vo.getbId());
+			pstmt.executeUpdate();
+		
+		} catch (SQLException e) {
+			System.out.println("TestDAO-delete 오류 로깅");
+			e.printStackTrace();
+		} finally {
+			JNDI.disconnect(pstmt, conn);
+		}
+		
+		
+	}
 }
 

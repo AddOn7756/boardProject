@@ -1,6 +1,7 @@
 package model.users;
 
 public class UsersVO {
+
 	private int userNum;
 	private String name;
 	private String id;

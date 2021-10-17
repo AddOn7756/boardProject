@@ -1,5 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
+	pageEncoding="UTF-8" errorPage="error.jsp"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="mytag"%>
 <!doctype html>
@@ -36,7 +36,7 @@
 	<!-- WRAPPER -->
 	<div id="wrapper">
 		<!-- 상단 바 -->
-		<mytag:navbar userName="${user.name}" userNum="${user.userNum}" />
+		<mytag:navbar userName="${user.name}" userNum="${user.userNum}" iconId="${user.iconId}" />
 		<!-- 왼쪽 사이드 바 -->
 		<mytag:sidebar ctgr='test' />
 		<!-- MAIN -->
@@ -46,41 +46,43 @@
 				<div class="container-fluid">
 					<div class="panel">
 						<div class="panel-heading">
-							<h3 class="panel-title">코딩 테스트</h3>
+							<h3 class="panel-title"><c:if test="${param.selUserNum >0}">${param.selUserName}님의 </c:if>
+							코딩 테스트</h3>
 						</div>
 						<div class="panel-body">
 							<!-- 정렬 버튼 -->
 							<div class="row">
-								<div class="col-md-4">
+								<div class="col-md-3">
 									<button type="button"
-										onclick="location.href='test.do?pageOrder=date&tTitle=${tTitle}'"
+										onclick="location.href='test.do?pageOrder=date&tTitle=${tTitle}&selUserNum=${selUserNum}&selUserName=${param.selUserName}'"
 										class="btn btn-primary btn-block">최신순</button>
 								</div>
-								<div class="col-md-4">
+								<div class="col-md-3">
 									<button type="button"
-										onclick="location.href='test.do?pageOrder=hit&tTitle=${tTitle}'"
+										onclick="location.href='test.do?pageOrder=hit&tTitle=${tTitle}&selUserNum=${selUserNum}&selUserName=${param.selUserName}'"
 										class="btn btn-primary btn-block">조회순</button>
 								</div>
-								<div class="col-md-4">
+								<div class="col-md-3">
 									<button type="button"
-										onclick="location.href='test.do?pageOrder=reply&tTitle=${tTitle}'"
+										onclick="location.href='test.do?pageOrder=reply&tTitle=${tTitle}&selUserNum=${selUserNum}&selUserName=${param.selUserName}'"
 										class="btn btn-primary btn-block">댓글순</button>
+								</div>
+								<div class="col-md-3">
+									<button type="button"
+										onclick="location.href='test.do?pageOrder=rating&tTitle=${tTitle}&selUserNum=${selUserNum}&selUserName=${param.selUserName}'"
+										class="btn btn-primary btn-block">별점순</button>
 								</div>
 							</div>
 							<!-- 정렬 버튼 END -->
 							<br> <br>
 							<!-- 검색 및 글쓰기 버튼 -->
 							<form method="post" action="test.do" name="test">
+									<input type="hidden" name="selUserNum" value="${selUserNum}">
+									<input type="hidden" name="selUserName" value="${param.selUserName}">
 								<div class="input-group">
 									<span class="input-group-btn">
-									<button class="btn btn-default" type="submit">검색</button></span>
-									<input class="form-control searchBox" type="text" name="tTitle">
-									<c:if test="${!empty user}">
-										<span class="input-group-btn">
-											<button type="button" onclick="location.href='formTest.jsp'"
-												class="btn btn-default box-right">글쓰기</button>
-										</span>
-									</c:if>
+									<button class="btn btn-primary" type="submit">검색</button></span>
+									<input class="form-control searchBox" type="text" name="tTitle" value="${param.tTitle}">
 								</div>
 							</form>
 							<!-- 검색 및 글쓰기 버튼 END -->
@@ -104,7 +106,7 @@
 										<tr>
 											<td>${v.tId}</td>
 											<td>${v.tLang}</td>
-											<td><a href="detailTest.do?tId=${v.tId}">${v.tTitle}</a></td>
+											<td><a href="detailTest.do?tId=${v.tId}&addHit=true">${v.tTitle}</a></td>
 											<td><a href="myPage.do?selUserNum=${v.userNum}&myListCtgr=test">${v.tWriter}</a></td>
 											<td>${v.tDate}</td>
 											<td>${v.tHit}</td>
@@ -114,15 +116,20 @@
 									</c:forEach>
 								</tbody>
 							</table>
+							<div class="text-right">
+							<c:if test="${!empty user}">
+								<button type="button" onclick="location.href='formTest.jsp'"
+									class="btn btn-default">글쓰기</button>
+							</c:if>
+							</div>
 							<!-- 게시물 리스트 END -->
 							<!-- 페이징 버튼 -->
-							<div class="text-center">
-								<c:forEach var="i" begin="0" end="${(pageLen-1)/3}">
-									<button type="button"
-										onclick="location.href='test.do?pageNum=${i}&tTitle=${tTitle}'"
-										class="label label-primary">${i+1}</button>
-								</c:forEach>
-							</div>
+					<!-- 페이징 버튼 -->
+							<mytag:paging pageLen="${pageLen}"
+								pageNum="${pageNum}" paraName="pageNum"
+								path="test.do?tTitle=${tTitle}&pageOrder=${pageOrder}&selUserNum=${selUserNum}&selUserName=${param.selUserName}" />
+
+							<!-- 페이징 버튼 END -->
 							<!-- 페이징 버튼 END -->
 						</div>
 					</div>
@@ -136,8 +143,7 @@
 	<footer>
 		<div class="container-fluid">
 			<p class="copyright">
-				&copy; 2017 <a href="https://www.themeineed.com" target="_blank">Theme
-					I Need</a>. All Rights Reserved.
+				&copy; 2021 <a href="index.jsp" target="_blank">Add-On</a>. All Rights Reserved.
 			</p>
 		</div>
 	</footer>

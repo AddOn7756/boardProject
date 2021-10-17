@@ -1,5 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
+	pageEncoding="UTF-8" errorPage="error.jsp"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="mytag"%>
 <!doctype html>
@@ -36,7 +36,7 @@
 	<!-- WRAPPER -->
 	<div id="wrapper">
 		<!-- 상단 바 -->
-		<mytag:navbar userName="${user.name}" userNum="${user.userNum}" />
+		<mytag:navbar userName="${user.name}" userNum="${user.userNum}" iconId="${user.iconId}" />
 		<!-- 왼쪽 사이드 바 -->
 		<mytag:sidebar ctgr='test'/>
 		<!-- MAIN -->
@@ -51,7 +51,7 @@
 						<input type="hidden" name="tId" value="${param.tId}">
 							<div class="panel-heading">
 								<h4 class="text-left">
-								<span class="lnr lnr-home"></span>&nbsp;${param.tWriter}
+								<span class="lnr lnr-user"></span>&nbsp;${param.tWriter}
 							</h4>
 							</div>
 							<div class="panel-body">
@@ -86,7 +86,7 @@
 						<input type="hidden" name="tWriter" value="${user.id}">
 							<div class="panel-heading">
 								<h4 class="text-left">
-								<span class="lnr lnr-home"></span>&nbsp;${user.id}
+								<span class="lnr lnr-user"></span>&nbsp;${user.id}
 							</h4>
 							</div>
 							<div class="panel-body">
@@ -98,7 +98,7 @@
 								<br>
 								<span>내용</span>
 								<textarea name="tContent" rows="20" class="form-control"
-									style="resize: none;" required></textarea>
+									style="resize: none;" placeholder="빈칸을 넣고 싶 은곳에 '_'(언더바)로 입력하세요." required></textarea>
 								<br>
 								<span>예시</span>
 								<textarea name="tEx" rows="6" class="form-control"
@@ -106,7 +106,7 @@
 								<br>
 								<span>정답</span>
 								<textarea name="tAnswer" rows="6" class="form-control"
-									style="resize: none;" required></textarea>
+									style="resize: none;"  required></textarea>
 								<br>
 								<button type="submit" class="btn btn-default">글 작성</button>
 							</div>
@@ -123,8 +123,7 @@
 		<footer>
 			<div class="container-fluid">
 				<p class="copyright">
-					&copy; 2017 <a href="https://www.themeineed.com" target="_blank">Theme
-						I Need</a>. All Rights Reserved.
+					&copy; 2021 <a href="index.jsp" target="_blank">Add-On</a>. All Rights Reserved.
 				</p>
 			</div>
 		</footer>

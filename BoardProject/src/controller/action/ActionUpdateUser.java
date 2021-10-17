@@ -80,8 +80,14 @@ public class ActionUpdateUser implements Action {
 			
 			out.println("<script>alert('회원 정보 수정에 실패했습니다!');location.href='"+url+"'</script>");
 		}
-			
+		
+		
+		
+		
+		
 		return forward;
 	}
 	
+	
+
 }

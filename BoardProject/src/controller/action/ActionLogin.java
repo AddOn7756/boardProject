@@ -29,6 +29,9 @@ public class ActionLogin implements Action {
 		userVO.setId(userID);
 		userVO.setPw(userPw);
 		
+		
+		
+		
 		if(!userDAO.login(userVO)) {
 			try {
 				PrintWriter out = response.getWriter();
@@ -42,7 +45,30 @@ public class ActionLogin implements Action {
 		}
 		userVO = userDAO.getDBData(userVO); //로그인 성공시 유저 데이터를 모두 가져옴
 		System.out.println("로그인 성공 UserVO : "+userVO);
+		
+		
 		HttpSession session =request.getSession();
+		
+		//관리자 모드 
+		
+		
+		String managerId =request.getServletContext().getInitParameter("managerId");
+		String managerPw = request.getServletContext().getInitParameter("managerPw");
+		System.out.println(request.getServletPath());
+		System.out.println("managerId : "+managerId);
+		System.out.println("managerPw : "+managerPw);
+		System.out.println("userID  : " + userVO.getId());
+		System.out.println("userPW  : " + userVO.getPw());
+		
+		if(
+			userVO.getId().equals(managerId)  &&
+			userVO.getPw().equals(managerPw)
+			
+			) {
+			System.out.println("-------관리자 모드 !!-------");
+			session.setAttribute("manager", userVO);
+		}
+		
 		session.setAttribute("user", userVO);
 		forward = new ActionForward();
 		forward.setPath("index.jsp"); // 나중에 수정해야 함! 이전 페이지로 갈 수 있도록!

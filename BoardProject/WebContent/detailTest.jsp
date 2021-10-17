@@ -1,5 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8" import="model.test.TestVO"%>
+	pageEncoding="UTF-8" errorPage="error.jsp"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="mytag"%>
@@ -40,7 +40,7 @@
 	<!-- WRAPPER -->
 	<div id="wrapper">
 		<!-- 상단 바 -->
-		<mytag:navbar userName="${user.name}" userNum="${user.userNum}" />
+		<mytag:navbar userName="${user.name}" userNum="${user.userNum}" iconId="${user.iconId}" />
 		<!-- 왼쪽 사이드 바 -->
 		<mytag:sidebar ctgr='test' />
 		<!-- MAIN -->
@@ -53,7 +53,7 @@
 					<div class="panel panel-headline">
 						<div class="panel-heading">
 							<h4 class="text-left">
-								<span class="lnr lnr-home"></span>&nbsp;<a href="myPage.do?selUserNum=${test.userNum}&myListCtgr=test">${test.tWriter}</a>
+								<span class="lnr lnr-user"></span>&nbsp;<a href="myPage.do?selUserNum=${test.userNum}&myListCtgr=test">${test.tWriter}</a>
 							</h4>
 							<span class="panel-subtitle text-right">${test.tDate}</span>
 						</div>
@@ -91,8 +91,10 @@
 								
 								<button class="btn btn-primary box-right" id="answerCheckBox" type="button" onclick="answerCheck()">정답 작성</button>
 								
-								<div class="input-group text-right" id="rating">
-										<span class="input-group-btn text-right"> <select class="example" name="tTotal">
+								<div class="input-group" id="rating">
+									<div class="alert alert-info" role="alert">
+										<i class="fa fa-info-circle"></i> <span>문제가 도움이 되셨나요? 별점으로 알려주세요!</span>
+										<span class="input-group-btn"> <select class="example" name="tTotal">
 											  <option value="1">1</option>
 											  <option value="2" selected>2</option>
 											  <option value="3">3</option>
@@ -100,9 +102,10 @@
 											  <option value="5">5</option>
 											</select>
 										</span>
-										<span class="input-group-btn">
+										<span class="input-group-btn text-right">
 											<button class="btn btn-primary" type="button" onclick="ratingUp()">별점 주기</button>
 										</span>
+										</div>
 									</div>
 								
 								<input type="hidden" name="tTitle" value="${test.tTitle}">
@@ -110,7 +113,7 @@
 								<input type="hidden" name="tLang" value="${test.tLang}">
 								<input type="hidden" name="tId" value="${test.tId}">
 								<input type="hidden" name="tContent" value="${test.tContent}">
-								<c:if test="${test.userNum==user.userNum}">
+								<c:if test="${test.userNum==user.userNum || !empty manager}">
 									<button type="submit" class="btn btn-default">글 수정</button>
 								</c:if>
 							</form>
@@ -119,8 +122,8 @@
 						
 						<!-- 댓글 -->
 						<div class="panel">
-							<div class="panel-heading">
-								<h3 class="panel-title">댓글</h3>
+							<div class="panel-heading"  >
+								<h3 class="panel-title">댓글 </h3>
 							</div>
 							<div class="panel-body">
 								<!-- 댓글작성 -->
@@ -140,34 +143,36 @@
 								<!-- 댓글작성 END -->
 								<br>
 								<!-- 댓글 리스트 -->
-								<table class="table table-condensed">
+								<table class="table table-condensed replyBox">
 									<tbody>
-										<c:forEach var="replySet" items="${replySets}">
-											<c:set var="reply" value="${replySet.rvo}" />
+										<c:forEach var="replySet" items="${testReplySets}">
+											<c:set var="reply" value="${replySet.reply}" />
 											<tr>
 												<td>${reply.rWriter}</td>
 												<td class="panel-action">
-													<div class="panel-heading">
-														<form method="post" action="control.jsp" name="replyUp">
+													<div class="panel-heading" <c:if test="${reply.deleteAt == 'Y'}">id="deletedReply"</c:if>>
+														<form method="post" action="updateTestReply.do" name="replyUp">
 															<input type="text" class="form-reply" name="rContent"
+																<c:if test="${param.findId eq reply.rId}">id ="findReply"</c:if> <c:if test="${reply.deleteAt == 'Y'}">id="deletedReplyContent"</c:if>
+																<c:if test="${param.insertedRid eq reply.rId}">id ="insertedRid"</c:if>
 																value="${reply.rContent}" required readonly>
 															<div class="right">
 																<!-- 댓글 수정 및 삭제 -->
-																<c:if test="${reply.userNum == user.userNum}">
+																<c:if test="${(reply.userNum == user.userNum|| !empty manager) && reply.deleteAt == 'N'}">
 																	<input type="hidden" name="rId" value="${reply.rId}">
 																	<input type="hidden" name="tId" value="${test.tId}">
 																	<input type="hidden" name="pageNum" value="${pageNum}">
-																	<button type="button" class="btn-update">수정하기</button>
-																	<input type="submit" class="btn updateBtn" value="수정완료">
-																	<button type="button" onclick="replyDel()">삭제하기</button>
+																	<button type="button" class="btn-update"><span class="lnr lnr-pencil"></span></button>
+																	<button type="submit" class="btn updateBtn"><span class="fa fa-pencil"></span></button>
+																	<button type="button" onclick="location.href='deleteTestReply.do?tId=${test.tId}&rId=${reply.rId}&pageNum=${pageNum}&parentId=${reply.parentId}&deleteAt=${reply.deleteAt}'"><span class="lnr lnr-cross-circle"></span></button>
 																</c:if>
 																<!-- 댓글 수정 및 삭제 END -->
-																<button type="button" class="btn-toggle-collapse">더보기
-																</button>
+																<button type="button" class="btn-toggle-collapse">댓글<span class="badge">${fn:length(replySet.rrlist) }</span>
+															</button>
 															</div>
 														</form>
 													</div>
-													<div class="panel-body panel-action-body">
+													<div class="panel-body panel-action-body" 	<c:if test="${param.parentId eq reply.rId}">id="findRreply"</c:if> >
 														<!-- 대댓글 작성 -->
 														<c:if test="${!empty user}">
 															<form method="post" action="insertTestReply.do" name="rreply">
@@ -192,17 +197,21 @@
 																	<tr>
 																		<td>${rreply.rWriter}</td>
 																		<td><div class="panel-heading">
-																			<form method="post" action="updateReply.do" name="rreplyUp">
-																				<input type="text" class="form-reply" name="rContent" value="${rreply.rContent}" required readonly>
-																				<div class="right">
+																			<form method="post" action="updateTestReply.do" name="rreplyUp">
+																					<input type="text" class="form-reply"
+																						name="rContent" value="${rreply.rContent}"
+																						<c:if test="${param.findId eq rreply.rId}">id ="findReply"</c:if>
+																						<c:if test="${param.insertedRid eq rreply.rId}">id ="insertedRid"</c:if>
+																						required readonly>
+																					<div class="right">
 																					<!-- 대댓글 수정 및 삭제 -->
-																					<c:if test="${rreply.rWriter == user.id}">
+																					<c:if test="${rreply.rWriter == user.id || !empty manager && reply.deleteAt == 'N'}">
 																					<input type="hidden" name="pageNum" value="${pageNum}">
 																						<input type="hidden" name="rId" value="${rreply.rId}">
 																						<input type="hidden" name="tId" value="${test.tId}">
-																						<button type="button" class="btn-update">수정하기</button>
-																						<input type="submit" class="btn updateBtn" value="수정완료">
-																						<button type="button" onclick="rreplyDel()">삭제하기</button>
+																						<button type="button" class="btn-update"><span class="lnr lnr-pencil"></span></button>
+																						<button type="submit" class="btn updateBtn"><span class="fa fa-pencil"></span></button>
+																						<button type="button" onclick="location.href='deleteTestReply.do?tId=${test.tId}&rId=${rreply.rId}&pageNum=${pageNum}&parentId=${rreply.parentId}&deleteAt=${reply.deleteAt}'"><span class="lnr lnr-cross-circle"></span></button>
 																					</c:if>
 																					<!-- 대댓글 수정 및 삭제 END -->
 																				</div>
@@ -223,6 +232,12 @@
 								</table>
 								<!-- 댓글 리스트 END -->
 							</div>
+								<!-- 페이징 버튼 -->
+							<mytag:paging pageLen="${pageLen}"
+								pageNum="${pageNum}" paraName="pageNum"
+								path="detailTest.do?tId=${test.tId}" />
+
+							<!-- 페이징 버튼 END -->
 						</div>
 						<!-- 댓글 END -->
 					</div>
@@ -235,8 +250,7 @@
 		<footer>
 			<div class="container-fluid">
 				<p class="copyright">
-					&copy; 2017 <a href="https://www.themeineed.com" target="_blank">Theme
-						I Need</a>. All Rights Reserved.
+					&copy; 2021 <a href="index.jsp" target="_blank">Add-On</a>. All Rights Reserved.
 				</p>
 			</div>
 		</footer>
@@ -285,6 +299,25 @@
 			document.detailTest.submit();
 	}
 	
+	window.onload = function(){
+		
+		if(document.getElementById("findRreply")){
+			var findRreply = document.getElementById("findRreply");
+			findRreply.style.display ='block';
+		}
+		
+		if(document.getElementById("findReply")){
+		var findReply = document.getElementById("findReply");
+		findReply.focus();
+		findReply.scrollIntoView();
+		
+		}
+		if(document.getElementById("insertedRid")){
+			var insertedReply = document.getElementById("insertedRid");
+		
+			insertedReply.scrollIntoView();
+			}
+	}
 	
 	
 	</script>

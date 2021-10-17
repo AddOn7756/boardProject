@@ -1,5 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
+	pageEncoding="UTF-8" errorPage="error.jsp"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <!doctype html>
 <html lang="ko" class="fullscreen-bg">
@@ -58,6 +58,8 @@
 								</div>
 								<button type="submit" class="btn btn-primary btn-lg btn-block">로그인</button>
 								<div class="bottom">
+								<span class="helper-text"><i class="fa fa-lock"></i> <a
+										href="findPw.jsp">비밀번호 찾기</a></span>
 									<span class="helper-text"><i class="fa fa-lock"></i> <a
 										href="join.jsp">회원가입</a></span>
 								</div>

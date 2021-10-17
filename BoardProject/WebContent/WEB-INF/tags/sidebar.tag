@@ -16,6 +16,8 @@
 								<span>자유 게시판</span></a></li>
 						<li><a href="test.do" class=""><i class="lnr lnr-code"></i>
 								<span>코딩 테스트</span></a></li>
+						<li><a href="inquery.jsp" class=""><i class="lnr lnr-bubble"></i>
+								<span>문의하기</span></a></li>
 						</c:if>
 						
 						<c:if test="${ctgr=='question'}">
@@ -27,6 +29,8 @@
 								<span>자유 게시판</span></a></li>
 						<li><a href="test.do" class=""><i class="lnr lnr-code"></i>
 								<span>코딩 테스트</span></a></li>
+						<li><a href="inquery.jsp" class=""><i class="lnr lnr-bubble"></i>
+								<span>문의하기</span></a></li>
 						</c:if>
 						
 						<c:if test="${ctgr=='board'}">
@@ -38,6 +42,8 @@
 								<span>자유 게시판</span></a></li>
 						<li><a href="test.do" class=""><i class="lnr lnr-code"></i>
 								<span>코딩 테스트</span></a></li>
+						<li><a href="inquery.jsp" class=""><i class="lnr lnr-bubble"></i>
+								<span>문의하기</span></a></li>
 						</c:if>
 						
 						<c:if test="${ctgr=='test'}">
@@ -49,6 +55,8 @@
 								<span>자유 게시판</span></a></li>
 						<li><a href="test.do" class="active"><i class="lnr lnr-code"></i>
 								<span>코딩 테스트</span></a></li>
+						<li><a href="inquery.jsp" class=""><i class="lnr lnr-bubble"></i>
+								<span>문의하기</span></a></li>
 						</c:if>
 						
 						<c:if test="${empty ctgr or ctgr=='announce'}">
@@ -60,6 +68,8 @@
 								<span>자유 게시판</span></a></li>
 						<li><a href="test.do" class=""><i class="lnr lnr-code"></i>
 								<span>코딩 테스트</span></a></li>
+						<li><a href="inquery.jsp" class=""><i class="lnr lnr-bubble"></i>
+								<span>문의하기</span></a></li>
 						</c:if>
 						
 					</ul>

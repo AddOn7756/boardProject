@@ -2,14 +2,17 @@ package controller.action;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import controller.common.Action;
 import controller.common.ActionForward;
+import mail.SendEmail;
 import model.board.BoardDAO;
 import model.board.BoardVO;
+import model.users.UsersDAO;
 
 public class ActionForm implements Action{
 
@@ -34,7 +37,22 @@ public class ActionForm implements Action{
 		boardVO.setbCtgr(bCtgr);
 		boardVO.setbLang(bLang);
 		boardVO.setbContent(bContent);
+		//------------- 안내사항일 시 이메일 전송 --------------//
 		
+		
+		if (bCtgr.equals("announce")) {
+			SendEmail sendEmail = new SendEmail();
+			UsersDAO userDAO = new UsersDAO();
+			
+			
+			ArrayList<String> emails = userDAO.getEmails();
+			sendEmail.sendEmails(emails,bTitle,bContent);
+		
+		}
+		//------------- 안내사항일 시 이메일 전송 --------------//
+		
+			
+			
 		PrintWriter out=null;
 		try {
 			out = response.getWriter();

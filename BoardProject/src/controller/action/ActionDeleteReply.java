@@ -19,9 +19,15 @@ public class ActionDeleteReply implements Action {
 		int rId = Integer.parseInt(request.getParameter("rId"));
 		int bId = Integer.parseInt(request.getParameter("bId"));
 		int pageNum = Integer.parseInt(request.getParameter("pageNum"));
+		int parentId = Integer.parseInt(request.getParameter("parentId"));
+		String deleteAt = request.getParameter("deleteAt");
 		
+				
 		reply.setrId(rId);
 		reply.setbId(bId);
+		reply.setParentId(parentId);
+		reply.setDeleteAt(deleteAt);
+		
 		
 		if(replyDAO.delete(reply)) {
 			System.out.println("삭제 성공");

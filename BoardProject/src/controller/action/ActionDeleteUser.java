@@ -5,6 +5,7 @@ import java.io.PrintWriter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import controller.common.Action;
 import controller.common.ActionForward;
@@ -34,11 +35,15 @@ public class ActionDeleteUser implements Action {
 			e.printStackTrace();
 		}
 		if (userDAO.delete(usersVO)) {
-			out.println("<script>alert('삭제가 완료되었습니다');location.href='index.jsp';</script>");
+			HttpSession session = request.getSession();
+			session.invalidate();
+			out.println("<script>alert('탈퇴가 완료되었습니다! 이용해주셔서 감사합니다');location.href='index.jsp';</script>");
 		}else {
-			out.println("<script>alert('삭제가 실패했습니다!);location.href='index.jsp';</script>");
+			out.println("<script>alert('삭제가 실패했습니다!');location.href='index.jsp';</script>");
 
 		}
+		
+		
 		return null;
 	}
 

@@ -1,5 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
+	pageEncoding="UTF-8" errorPage="error.jsp"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <!doctype html>
 <html lang="ko" class="fullscreen-bg">
@@ -29,6 +29,16 @@
 	href="assets/img/apple-icon.jpg">
 <link rel="icon" type="image/png" sizes="96x96"
 	href="assets/img/favicon.jpg">
+<style type="text/css">
+#checkNum {
+	display: none;
+}
+
+#message {
+	color: red;
+}
+</style>
+
 </head>
 
 <body>
@@ -45,72 +55,11 @@
 						<!-- 회원가입 -->
 						<c:if test="${empty user}">
 							<form action="join.do" method="post" name="join">
-							<input type="hidden" name="iconId" value="1">
+								<input type="hidden" name="iconId" value="default.png">
 								<div class="form-group">
 									<span>이름</span> <input class="form-control" type="text"
 										name="name" maxlength="10" required>
-										
-								</div>
-								<div class="form-group">
-									<span>성별</span> <br> <label class="fancy-radio"> <input
-										name="gender" value="M" type="radio"> <span><i></i>남성</span>
-									</label> <label class="fancy-radio"> <input name="gender"
-										value="F" type="radio"> <span><i></i>여성</span>
-									</label>
-								</div>
-								<div class="form-group">
-									<span>아이디</span> <div class="input-group">
-											<input class="form-control" id="id" name="id" pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,16}$" maxlength="16"
-											title="영어,숫자 혼합  6-16자리" placeholder="영어,숫자 혼합  6-16자리" type="text" required>
-											<span class="input-group-btn"><button class="btn btn-primary" id="idCheck" type="button" onclick="idCheck();">중복확인</button></span>
-										</div>
-								</div>
-								<div class="form-group">
-									<span>비밀번호</span> <input class="form-control" type="password"
-										name="pw" pattern="^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,16}$" maxlength="16"
-										title="영어,숫자,특수문자 혼합  8-16자리" placeholder="영어,숫자,특수문자 혼합  8-16자리" required>
-								</div>
-								<div class="form-group">
-									<span>비밀번호 확인</span> <input class="form-control" type="password"
-										name="rpw" maxlength="16" required>
-								</div>
-								<div class="form-group">
-									<span>생년월일</span> <input class="form-control" type="date"
-										name="birth" max="9999-12-31" min="1000-01-01" required>
-								</div>
-								<div class="form-group">
-									<span>휴대폰 번호</span> <input class="form-control" type="text"
-										name="phone" onkeypress="inNumber();" pattern=".{11}" maxlength="11" 
-										title="형식 01012345678" placeholder="'-'를 제외한 11자리 번호" required>
-								</div>
-								<div class="form-group">
-									<span>주소</span> <div class="input-group">
-									<input class="form-control" type="text" id="addr" name="addr" readonly required>
-									<span class="input-group-btn">
-										<button class="btn btn-primary" type="button" onclick="search_address();">검색</button>
-									</span> </div>
-								</div>
-								<div class="form-group">
-									<span>이메일</span> <input class="form-control" type="email"
-										name="email" required>
-								</div>
-								<br>
-								<div class="form-group">
-									<input class="btn btn-primary btn-block" onclick="return joinform_check();" type="submit"
-										value="회원가입">
-								</div>
-							</form>
-						</c:if>
-						<!-- 회원가입 END -->
-						<!-- 회원 정보수정 -->
-						<c:if test="${!empty user}">
-							<form action="updateUser.do" method="post" name="userUp">
-							<input type="hidden" name="iconId" value="${user.iconId}">
-							<input type="hidden" name="userNum" value="${user.userNum}">
-								<div class="form-group">
-									<span>이름</span> <input class="form-control" type="text"
-										name="name" maxlength="10" value="${user.name}" required>
-										
+
 								</div>
 								<div class="form-group">
 									<span>성별</span> <br> <label class="fancy-radio"> <input
@@ -121,33 +70,133 @@
 								</div>
 								<div class="form-group">
 									<span>아이디</span>
-											<input class="form-control" name="id" pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,16}$" maxlength="16"
-											title="영어,숫자 혼합  6-16자리" placeholder="영어,숫자 혼합  6-16자리" type="text" value="${user.id}" required readonly>
+									<div class="input-group">
+										<input class="form-control" id="id" name="id"
+											pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,16}$"
+											maxlength="16" title="영어,숫자 혼합  6-16자리"
+											placeholder="영어,숫자 혼합  6-16자리" type="text" required>
+										<span class="input-group-btn"><button
+												class="btn btn-primary" type="button" onclick="idCheck();">중복확인</button></span>
+									</div>
 								</div>
 								<div class="form-group">
 									<span>비밀번호</span> <input class="form-control" type="password"
-										name="pw" pattern="^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,16}$" maxlength="16"
-										title="영어,숫자,특수문자 혼합  8-16자리" placeholder="영어,숫자,특수문자 혼합  8-16자리" value="${user.pw}" required>
+										name="pw"
+										pattern="^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,16}$"
+										maxlength="16" title="영어,숫자,특수문자 혼합  8-16자리"
+										placeholder="영어,숫자,특수문자 혼합  8-16자리" required>
 								</div>
 								<div class="form-group">
-									<span>비밀번호 확인</span> <input class="form-control" type="password"
-										name="rpw" maxlength="16" value="${user.pw}" required>
+									<span>비밀번호 확인</span> <input class="form-control"
+										type="password" name="rpw" maxlength="16" required>
 								</div>
 								<div class="form-group">
 									<span>생년월일</span> <input class="form-control" type="date"
-										name="birth" max="9999-12-31" min="1000-01-01" value="${user.birth}" required>
+										name="birth" max="9999-12-31" min="1000-01-01" required>
 								</div>
 								<div class="form-group">
 									<span>휴대폰 번호</span> <input class="form-control" type="text"
-										name="phone" onkeypress="inNumber();" pattern=".{11}" maxlength="11" 
-										title="형식 01012345678" placeholder="'-'를 제외한 11자리 번호" value="${user.phone}" required>
+										name="phone" onkeypress="inNumber();" pattern=".{11}"
+										maxlength="11" title="형식 01012345678"
+										placeholder="'-'를 제외한 11자리 번호" required>
 								</div>
 								<div class="form-group">
-									<span>주소</span> <div class="input-group">
-									<input class="form-control" type="text" id="addr" name="addr" value="${user.addr}" readonly required>
-									<span class="input-group-btn">
-										<button class="btn btn-primary" type="button" onclick="search_address();">검색</button>
-									</span> </div>
+									<span>주소</span>
+									<div class="input-group">
+										<input class="form-control" type="text" id="addr" name="addr"
+											readonly required> <span class="input-group-btn">
+											<button class="btn btn-primary" type="button"
+												onclick="search_address();">검색</button>
+										</span>
+									</div>
+								</div>
+								<div class="form-group" id="emailSection">
+									<!--  id=emailSection 추가  -->
+									<!-- id="email추가" -->
+									<!------            인증 구간 추가 되었음! start                      end -->
+									<span>이메일</span>
+									<div class="input-group">
+										<input class="form-control" id="email" name="email"
+											type="email" required> <span class="input-group-btn"><button
+												class="btn btn-primary" type="button" id="sendCheckNum"
+												onclick="sendCheckEmail()">인증번호 받기</button></span>
+									</div> <br>
+		
+									<div class="input-group" id="checkNum">
+										<div class="input-group">
+											<input class="form-control" type="text" id="inputNum">
+											<span class="input-group-btn"><button
+													class="btn btn-primary" type="button" onclick="check()">인증번호
+													입력하기</button></span>
+										</div>
+										<div id="demo"></div>
+									</div>
+
+									<div id="message"></div>
+
+
+
+									<!--인증 구간 추가 되었음!  end -->
+								</div>
+								<br>
+								<div class="form-group">
+									<input class="btn btn-primary btn-block"
+										onclick="return joinform_check();" type="submit" value="회원가입">
+								</div>
+							</form>
+						</c:if>
+						<!-- 회원가입 END -->
+						<!-- 회원 정보수정 -->
+						<c:if test="${!empty user}">
+							<form action="updateUser.do" method="post" name="userUp">
+								<input type="hidden" name="iconId" value="${user.iconId}">
+								<input type="hidden" name="userNum" value="${user.userNum}">
+								<div class="form-group">
+									<span>이름</span> <input class="form-control" type="text"
+										name="name" maxlength="10" value="${user.name}" required readonly>
+
+								</div>
+								<div class="form-group">
+									<span>성별</span>
+									<input class="form-control" name="gender" type="text" value="${user.gender}" required readonly>
+								</div>
+								<div class="form-group">
+									<span>아이디</span> <input class="form-control" name="id" type="text" value="${user.id}" required readonly>
+								</div>
+								<div class="form-group">
+									<span>비밀번호</span> <input class="form-control" type="password"
+										name="pw"
+										pattern="^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,16}$"
+										maxlength="16" title="영어,숫자,특수문자 혼합  8-16자리"
+										placeholder="영어,숫자,특수문자 혼합  8-16자리" value="${user.pw}"
+										required>
+								</div>
+								<div class="form-group">
+									<span>비밀번호 확인</span> <input class="form-control"
+										type="password" name="rpw" maxlength="16" value="${user.pw}"
+										required>
+								</div>
+								<div class="form-group">
+									<span>생년월일</span> <input class="form-control" type="date"
+										name="birth" max="9999-12-31" min="1000-01-01"
+										value="${user.birth}" required>
+								</div>
+								<div class="form-group">
+									<span>휴대폰 번호</span> <input class="form-control" type="text"
+										name="phone" onkeypress="inNumber();" pattern=".{11}"
+										maxlength="11" title="형식 01012345678"
+										placeholder="'-'를 제외한 11자리 번호" value="${user.phone}" required>
+								</div>
+								<div class="form-group">
+									<span>주소</span>
+									<div class="input-group">
+										<input class="form-control" type="text" id="addr" name="addr"
+											value="${user.addr}" readonly required> <span
+											class="input-group-btn">
+											<button class="btn btn-primary" type="button"
+												onclick="search_address();">검색</button>
+										</span>
+									</div>
 								</div>
 								<div class="form-group">
 									<span>이메일</span> <input class="form-control" type="email"
@@ -155,10 +204,10 @@
 								</div>
 								<br>
 								<div class="form-group">
-									<input class="btn btn-primary" onclick="return joinform_check()" type="submit"
-										value="수정하기">
-									<input class="btn btn-warning box-right" onclick="del()" type="button"
-										value="탈퇴하기">
+									<input class="btn btn-primary"
+										onclick="return updateform_check()" type="submit" value="수정하기">
+									<input class="btn btn-warning box-right" onclick="del()"
+										type="button" value="탈퇴하기">
 								</div>
 							</form>
 						</c:if>
@@ -169,18 +218,22 @@
 		</div>
 	</div>
 	<!-- END WRAPPER -->
-	
+
 	<script src="assets/vendor/jquery/jquery.min.js"></script>
 	<script src="assets/scripts/klorofil-common.js"></script>
-	<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+	<script src="jquery-3.6.0.min.js"></script>
+	<script
+		src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 	<script type="text/javascript">
+		var isIdRight = false;  // 아이디 유효성 검사 체크 변수 
+		var isEmailRight = false; // 이메일 유효성 검사 체크 변수 
 		// 핸드폰칸에 번호만 입력
 		function inNumber() {
 			if (event.keyCode<48 || event.keyCode>57) {
 				event.returnValue = false;
 			}
 		}
-		
+
 		// 탈퇴 버튼
 		function del() {
 			result = confirm("탈퇴하시겠습니까?");
@@ -192,22 +245,41 @@
 				return;
 			}
 		}
-		
+
 		// 비밀번호 확인
-		function joinform_check() {
-
-			var pw = document.getElementById("pw");
-			var rpw = document.getElementById("rpw");
-
-			if (rpw.value !== pw.value) {
-				alert("비밀번호가 일치하지 않습니다..");
-				rpw.focus();
-				return false;
-			}
+function joinform_check() {
+		//-------아이디 유효성 검사-----------------
+		if(!isIdRight){
+			alert("아이디 중복 검사를 완료하지 못했습니다.");
+			$('input[name=id]').focus();
+			return false;
 		}
-		//   ================================================================================
 			
-			//우편번호 검색 팝업창
+			
+		// --- 비밀번호 유효성 검사 	
+         var pw = $('input[name=pw]').val();
+         var rpw = $('input[name=rpw]').val();
+         
+         if (rpw != pw) {
+            alert("비밀번호가 일치하지 않습니다.");
+            $('input[name=rpw]').focus();
+            return false;
+         }
+         
+   //    ------------------- 이메일 유효성 검사 여부 확인 -------------      
+		if(!isEmailRight){
+			alert("이메일 인증을 완료하지 못했습니다.");
+			$('input[name=email]').focus();
+			
+			return false;
+		}
+		
+		
+         return true;
+      }
+		//   ================================================================================
+
+		//우편번호 검색 팝업창
 
 		function search_address() {
 			new daum.Postcode(
@@ -256,11 +328,138 @@
 
 							// 우편번호와 주소 정보를 해당 필드에 넣는다.
 							// document.getElementById('postal_code').value = data.zonecode;
-							document.getElementById("addr").value = addr+extraAddr;
+							document.getElementById("addr").value = addr
+									+ extraAddr;
 							// 커서를 상세주소 필드로 이동한다.
 							document.getElementById("addr").focus();
 						}
 					}).open();
+		}
+		
+		function idCheck() {
+			   var id = $('#id').val();
+			   console.log(id);
+			   $.ajax({
+			      type : 'GET',
+			      url : "idCheck.do",
+			      data : "id="+id,
+			      success : function(result) {
+			         console.log(result);
+			         if (result == 'false') {
+			            alert("ID형식이 잘못 되었습니다. 다시 입력하세요.");
+
+			         } else if (result == 'fail') {
+			            alert("ID가 이미 존재합니다. 다시 입력하세요.");
+
+			         } else {
+			            alert("사용 가능한 ID입니다.");
+			            $('#id').attr("readonly",true);
+			            $('.alert').css("display","none");
+			           
+			            /*        아이디 체크 되었음을 확인        */
+			            isIdRight = true;
+			         }
+			      },
+			      error : function(xhr) {
+			         console.log(xhr.status + " : " + xhr.errorText);
+			         alert("에러발생!");
+			      }
+
+			   })
+			}
+		/*   -----------------------------------       추가된 스크립트      --------------------------------------------        */
+		function sendCheckEmail() {
+			var email = $('#email').val();
+			console.log(email);
+			localStorage.removeItem("timeStamp"); // setinterval 실시 ! 추가
+			$("#checkNum").css("display", "block");
+
+			$("#message").html("이메일 인증 미완료");
+			$("#message").css("color", "red");
+			// 이메일 인증이 이미 완료된 상태에서 다시 이메일 인증하기 버튼을 누르면 이메일 인증도 초기화!!
+
+			$.ajax({
+				type : 'post',
+				url : "sendCheckEmail.do?email=" + email,
+				data : email
+			})
+
+			alert("인증번호가 전송되었습니다!");
+
+		}
+		function check() {
+			var inputNum = $("#inputNum").val();
+
+			$.ajax({
+				type : 'post',
+				url : "check.do?inputNum=" + inputNum,
+				data : inputNum,
+				success : function(result) {
+					if (result == 'success') {
+						$("#checkNum").css("display", "none");
+						$("#message").html("이메일 인증 완료");
+						$("#message").css("color", "green");
+						
+						/*        이메일 체크 되었음을 확인        */
+						isEmailRight = true;
+						alert("인증이 성공했습니다!");
+
+					} else {
+						$(checkButton).val('미인증');
+						alert("번호가 유효하지 않습니다");
+					}
+
+				}
+
+			})
+
+		}
+		var timer = setInterval(function() {
+			var timeStamp = 0;
+
+			if (localStorage.getItem("timeStamp")) {
+				console.log(localStorage.getItem("timeStamp"));
+				timeStamp = parseInt(localStorage.getItem("timeStamp"));
+			} else {
+				timeStamp = Math.round(new Date() / 1000) + 30;
+
+				localStorage.setItem("timeStamp", timeStamp);
+			}
+			var now = Math.round(new Date() / 1000);
+
+			var interval = timeStamp - now;
+			console.log(timeStamp);
+			console.log(now);
+
+			min = Math.round(interval / 60);
+			sec = interval % 60;
+			if (interval < 0) {
+				
+
+				$("#checkNum").css("display", "none");
+
+				min = 0;
+				sec = 0;
+			}
+
+			document.getElementById("demo").innerHTML = min + " : " + sec;
+			interval--;
+
+		}, 1000);
+
+		/*   -----------------------------------       추가된 스크립트      --------------------------------------------        */
+
+		function updateform_check() {
+
+			// --- 비밀번호 유효성 검사 	
+			var pw = $('input[name=pw]').val();
+			var rpw = $('input[name=rpw]').val();
+
+			if (rpw != pw) {
+				alert("비밀번호가 일치하지 않습니다.");
+				$('input[name=rpw]').focus();
+				return false;
+			}
 		}
 	</script>
 </body>

@@ -16,7 +16,8 @@ public class ActionInsertTestReply implements Action {
 
 		TestReplyDAO replyDAO = new TestReplyDAO();
 		TestReplyVO reply = new TestReplyVO();
-
+		
+		int rId=0;
 		int tId = Integer.parseInt(request.getParameter("tId"));
 		int userNum = Integer.parseInt(request.getParameter("userNum"));
 		String rContent = request.getParameter("rContent");
@@ -29,13 +30,14 @@ public class ActionInsertTestReply implements Action {
 		reply.setrWriter(rWriter);
 		reply.setUserNum(userNum);
 		System.out.println("ActionInsertTestReply.reply  : "+reply);
-		if(replyDAO.insert(reply)) {
+		if((rId=replyDAO.insert(reply))>0) {
 			System.out.println("댓글 입력 성공!");
 		}else {
 			System.out.println("댓글 입력 실패!");
 		}
 		String path = "detailTest.do";
 		path += "?tId"+tId;
+		path += "&insertedRid="+rId;
 		if (request.getParameter("pageNum") !=null) {
 			path +="&pageNum="+request.getParameter("pageNum");
 		}

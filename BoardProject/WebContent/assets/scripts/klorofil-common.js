@@ -250,7 +250,7 @@ function idCheck() {
 	$.ajax({
 		type : 'GET',
 		url : "idCheck.do",
-		data : id,
+		data : "id="+id,
 		success : function(result) {
 			console.log(result);
 			if (result == 'false') {
@@ -261,7 +261,6 @@ function idCheck() {
 
 			} else {
 				alert("사용 가능한 ID입니다.");
-				
 			}
 		},
 		error : function(xhr) {

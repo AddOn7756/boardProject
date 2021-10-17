@@ -240,12 +240,13 @@ public class UsersDAO {
 		
 		boolean res = false;
 		
-		String sql_DELETE = "UPDATE USERS SET iconid="+defaultImg+" WHERE usernum=?";
+		String sql_DELETE = "UPDATE USERS SET iconid=? WHERE usernum=?";
 		
 		try {
+			System.out.println(sql_DELETE);
 			pstmt = conn.prepareStatement(sql_DELETE);
-			pstmt.setInt(1, vo.getUserNum());
-			
+			pstmt.setString(1, defaultImg);
+			pstmt.setInt(2, vo.getUserNum());
 			pstmt.executeUpdate();
 			res = true;
 			
@@ -282,6 +283,34 @@ public class UsersDAO {
 				JNDI.disconnect(pstmt, conn);
 			}
 			return res;
+		}
+//------------------------------------------------------------------------
+		// 이메일 찾아주는 메서드 
+		public ArrayList<String> getEmails(){
+			Connection conn = JNDI.getConnection();
+			PreparedStatement pstmt = null;
+			ArrayList<String> emails = new ArrayList<String>();
+			try {
+				String sql = "select email from users";
+				pstmt = conn.prepareStatement(sql);
+				
+				ResultSet rs = pstmt.executeQuery();
+				
+				while (rs.next()) {
+					emails.add(rs.getString(1));
+					System.out.println("UsersDAO getEmails rs.getString : "+ rs.getString(1));
+				}
+				
+			}catch(SQLException e) {
+				e.printStackTrace();
+			}finally {
+				JNDI.disconnect(pstmt, conn);
+			}
+			
+			
+			return emails;
+			
+			
 		}
 	
 	

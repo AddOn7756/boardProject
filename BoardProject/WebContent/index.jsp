@@ -1,5 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
+	pageEncoding="UTF-8" errorPage="error.jsp"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="mytag"%>
 <!doctype html>
@@ -36,7 +36,7 @@
 	<!-- WRAPPER -->
 	<div id="wrapper">
 		<!-- 상단 바 -->
-		<mytag:navbar userName="${user.name}" userNum="${user.userNum}" />
+		<mytag:navbar userName="${user.name}" userNum="${user.userNum}" iconId="${user.iconId}" />
 		<!-- 왼쪽 사이드 바 -->
 		<mytag:sidebar ctgr='index' />
 		<!-- MAIN -->
@@ -97,8 +97,7 @@
 		<footer>
 			<div class="container-fluid">
 				<p class="copyright">
-					&copy; 2017 <a href="https://www.themeineed.com" target="_blank">Theme
-						I Need</a>. All Rights Reserved.
+					&copy; 2021 <a href="index.jsp" target="_blank">Add-On</a>. All Rights Reserved.
 				</p>
 			</div>
 		</footer>

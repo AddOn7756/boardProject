@@ -12,7 +12,7 @@ import javax.servlet.annotation.WebFilter;
 /**
  * Servlet Filter implementation class CommonFilter
  */
-@WebFilter({"*.do","/CommonFilter","*.jsp"})
+@WebFilter({"*.do","*.jsp"})
 public class CommonFilter implements Filter {
 
     /**
